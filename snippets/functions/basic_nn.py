@@ -41,4 +41,18 @@ def optimize(learning_rate, w, b):
     w.data -= learning_rate * w.grad.data
     b.data -= learning_rate * b.grad.data
 
+
+def output_to(x, y, pred, w, b, loss, write_wb=False):
+    with open("output.csv", 'w') as f:
+        f.write("Input, Output, y_pred\n")
+        for (xVal, yVal, pred) in zip(x, y, pred):
+            f.write(str(xVal.item()) + "," + str(yVal.item()) + "," + str(pred.item()) + '\n')
+
+        if write_wb:
+            f.write("\n\nw, b, loss\n")
+            for v in [w, b, loss]:
+                f.write(str(v.item()) + ",")
+        f.write("\n")
+        f.close()
+
 learning_rate = 1e-4
