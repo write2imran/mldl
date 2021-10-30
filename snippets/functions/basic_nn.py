@@ -1,6 +1,7 @@
 import torch
 from torch.autograd import Variable
 import numpy as np
+import os
 
 def get_data():
     train_X = np.asarray([3.3,4.4,5.5,6.71,6.93,4.168,9.779,6.182,7.59,2.167,
@@ -42,16 +43,38 @@ def optimize(learning_rate, w, b):
     b.data -= learning_rate * b.grad.data
 
 
-def output_to(x, y, pred, w, b, loss, write_wb=False):
-    with open("output.csv", 'w') as f:
-        f.write("Input, Output, y_pred\n")
-        for (xVal, yVal, pred) in zip(x, y, pred):
-            f.write(str(xVal.item()) + "," + str(yVal.item()) + "," + str(pred.item()) + '\n')
+def output_io(x, y, pred):
 
-        if write_wb:
-            f.write("\n\nw, b, loss\n")
-            for v in [w, b, loss]:
-                f.write(str(v.item()) + ",")
+    filename = "output.csv"
+    if os.path.exists(filename):
+        append_write = 'a'  # append if already exists
+    else:
+        append_write = 'w'  # make a new file if not
+
+    with open(filename, append_write) as f:
+        f.write("Input, Output, y_pred, diff\n")
+        diff = pred - y
+        for (xVal, yVal, pred, diff) in zip(x, y, pred, diff):
+            f.write(str(xVal.item()) + "," + str(yVal.item())
+                    + "," + str(pred.item())
+                    + "," + str(diff.item())
+                    + '\n')
+        f.close()
+
+
+def output_wb_loss(case, w, b, loss):
+    filename = "parameters.csv"
+    if os.path.exists(filename):
+        append_write = 'a'  # append if already exists
+    else:
+        append_write = 'w'  # make a new file if not
+
+    with open("parameters.csv", append_write) as f:
+        if append_write != 'a':
+            f.write("case, w, b, loss\n")
+        f.write(case + ",")
+        for v in [w, b, loss]:
+            f.write(str(v.item()) + ",")
         f.write("\n")
         f.close()
 
