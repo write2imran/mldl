@@ -55,12 +55,13 @@ def output_io(x, y, pred):
         append_write = 'w'  # make a new file if not
 
     with open(filename, append_write) as f:
-        f.write("Input, Output, y_pred, diff\n")
+        f.write("Input, Output, y_pred, diff, diff.power\n")
         diff = pred - y
         for (xVal, yVal, pred, diff) in zip(x, y, pred, diff):
             f.write(str(xVal.item()) + "," + str(yVal.item())
                     + "," + str(pred.item())
                     + "," + str(diff.item())
+                    + "," + str(diff.item()**2)
                     + '\n')
         f.close()
 
