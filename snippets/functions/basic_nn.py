@@ -20,14 +20,17 @@ def plot_variable(x,y,z='',**kwargs):
             l.append(a.data.numpy())
     plt.plot(l[0],l[1],z,**kwargs)
 
+
 def get_weights():
-    w = Variable(torch.randn(1),requires_grad = True)
+    w = Variable(torch.randn(1),requires_grad=True)
     b = Variable(torch.randn(1),requires_grad=True)
     return w,b
 
+
 def simple_network(x, w, b):
-    y_pred = torch.matmul(x,w)+b
+    y_pred = torch.matmul(x, w)+b
     return y_pred
+
 
 def loss_fn(y,y_pred, w, b):
     loss = (y_pred-y).pow(2).sum()
@@ -71,10 +74,15 @@ def output_wb_loss(case, w, b, loss):
 
     with open("parameters.csv", append_write) as f:
         if append_write != 'a':
-            f.write("case, w, b, loss\n")
+            f.write("case, w, w.grad, b, b.grad, loss\n")
         f.write(case + ",")
+
         for v in [w, b, loss]:
-            f.write(str(v.item()) + ",")
+            if not v.grad is None:
+                f.write(str(v.item()) + "," + str(v.grad.item()) + ",")
+            else:
+                f.write(str(v.item()))
+
         f.write("\n")
         f.close()
 
